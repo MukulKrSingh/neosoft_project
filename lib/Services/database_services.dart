@@ -1,50 +1,46 @@
-import 'dart:convert';
-import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Models/user_model.dart';
+
+
 
 class DataBaseServices {
   SharedPreferences? prefs;
   List<String> userStringList = [];
   late List<User> selectedUserList = [];
   late Map<String, dynamic> userMap = {};
-  List<String>? listOfUserFromPrefs = [];
+  List<List<String>?>? listOfUserFromPrefs = [];
+  //int uniqueUser = 0;
+  int uniqueUser = 0;
+  int i = 0;
 
   DataBaseServices();
 
-  Future<List<User>> getDataFromDb() async {
+  Future<List<List<String>?>?> getDataFromDb() async {
     prefs = await SharedPreferences.getInstance();
-    listOfUserFromPrefs = prefs!.getStringList('users');
-    print(listOfUserFromPrefs!.length);
-    for (var singleUser in listOfUserFromPrefs!) {
-      
-        userMap.addAll(jsonDecode(singleUser));
-      
+
+    while (true) {
+      if (prefs?.getStringList(i.toString()) != null) {
+        listOfUserFromPrefs?.add(prefs?.getStringList(i.toString()));
+      }
+      i++;
+      if (prefs?.getStringList(i.toString()) == null) {
+        break;
+      }
+      //print('in loop');
     }
-    print('Map length ${userMap.length}');
-
-    for (var keys in userMap.values) {
-      selectedUserList.add(User.fromJson(userMap[keys]));
-    }
-
-    print('get from DB ${selectedUserList.length}');
-
-    return selectedUserList;
+    return listOfUserFromPrefs;
   }
 
-  addDataToDb(List<User> user) async {
+  addDataToDb(List<List<String>> selectedUsersList) async {
     //List<String> userStringList = [];
-
-    for (var singleUser in user) {
-      userStringList.add(jsonEncode(singleUser));
-    }
-
-    print('In addToDb');
-    print(userStringList.length);
-
     prefs = await SharedPreferences.getInstance();
-    prefs?.setStringList('users', userStringList);
+    prefs?.clear();
+    for (var user in selectedUsersList) {
+      //print(user[1]);
+      prefs?.setStringList(uniqueUser.toString(), user);
+      uniqueUser++;
+    }
   }
 }
