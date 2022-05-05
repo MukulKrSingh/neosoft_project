@@ -12,18 +12,26 @@ class User {
     this.id,
     this.avatarUrl,
     this.url,
+    //this.isCheck,
   );
+
+  @override
+  String toString() {
+    return '{${this.login},${this.id},${this.avatarUrl},${this.url}}';
+  }
 
   final String login;
   final int id;
   final String avatarUrl;
   final String url;
+  //bool isCheck = false;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         json["login"],
         json["id"],
         json["avatar_url"],
         json["url"],
+        //json["isCheck"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -31,5 +39,6 @@ class User {
         "id": id,
         "avatar_url": avatarUrl,
         "url": url,
+        //"isCheck":isCheck,
       };
 }

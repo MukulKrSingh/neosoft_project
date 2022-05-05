@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neosoft_project/Services/database_services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Models/user_model.dart';
 import '../View_Model/bloc/users_list_bloc.dart';
@@ -16,6 +20,9 @@ class _UserListPageState extends State<UserListPage> {
   //final UsersListBloc _bloc = UsersListBloc();
   final UsersListBloc _bloc = UsersListBloc();
   final ScrollController scrollController = ScrollController();
+  //SharedPreferences? prefs;
+  late DataBaseServices db;
+  List<User> selectedUsersList = [];
 
   @override
   void initState() {
@@ -82,11 +89,15 @@ class _UserListPageState extends State<UserListPage> {
         controller: scrollController,
         itemCount: userModel.length + 1,
         itemBuilder: (context, index) {
-          return index > userModel.length-1
+          return index > userModel.length - 1
               ? _buildLoading()
               : Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ListTile(
+                    //selectedColor: Colors.green,
+                    onTap: () {
+                      _handleTap(userModel[index]);
+                    },
                     leading: ClipOval(
                         child: Image.network(userModel[index].avatarUrl)),
                     title: Text(userModel[index].login),
@@ -106,9 +117,19 @@ class _UserListPageState extends State<UserListPage> {
 
   bool _handelScrollNotification(ScrollNotification notification) {
     //print('In scroll handler');
-    if (notification is ScrollEndNotification && scrollController.position.maxScrollExtent == scrollController.offset ) {
+    if (notification is ScrollEndNotification &&
+        scrollController.position.maxScrollExtent == scrollController.offset) {
       _bloc.add(getUsersList());
     }
     return false;
+  }
+
+  _handleTap(User user) {
+    db = DataBaseServices();
+    if (!selectedUsersList.contains(user)) {
+      selectedUsersList.add(user);
+      db.addDataToDb(selectedUsersList);
+    }
+    
   }
 }
