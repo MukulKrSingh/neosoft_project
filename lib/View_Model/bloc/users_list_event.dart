@@ -9,4 +9,7 @@ abstract class UsersListEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class getUsersList extends UsersListEvent {}
+class getUsersList extends UsersListEvent {
+}
+
+//class getNextPage extends UsersListEvent {}
