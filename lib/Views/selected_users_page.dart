@@ -1,10 +1,8 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:neosoft_project/Services/database_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Models/user_model.dart';
 
 class SelectedUsersPage extends StatefulWidget {
   const SelectedUsersPage({Key? key}) : super(key: key);
@@ -26,30 +24,25 @@ class _SelectedUsersPageState extends State<SelectedUsersPage> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: db.getDataFromDb(),
-      builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+      builder:
+          (BuildContext context, AsyncSnapshot<List<List<String>?>?> snapshot) {
         if (snapshot.hasData) {
           return ListView.builder(
             itemCount: snapshot.data?.length,
             itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(snapshot.data![index].login),
-                leading: ClipOval(
-                    child: Image.network(snapshot.data![index].avatarUrl),
-                    ),
-                    );
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  title: Text(snapshot.data![index]![0]),
+                  leading:
+                      ClipOval(child: Image.network(snapshot.data![index]![1])),
+                ),
+              );
             },
           );
-        } else {
-          return const CircularProgressIndicator();
         }
+        return Container();
       },
     );
-  }
-
-  getDataFromDB() async {
-    prefs = await SharedPreferences.getInstance();
-
-    Map<String, dynamic> userMap = jsonDecode(prefs?.getString('user') ?? "");
-    User user = User.fromJson(userMap);
   }
 }

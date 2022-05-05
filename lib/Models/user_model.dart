@@ -15,10 +15,7 @@ class User {
     //this.isCheck,
   );
 
-  @override
-  String toString() {
-    return '{${this.login},${this.id},${this.avatarUrl},${this.url}}';
-  }
+ 
 
   final String login;
   final int id;

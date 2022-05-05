@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neosoft_project/Services/database_services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Models/user_model.dart';
 import '../View_Model/bloc/users_list_bloc.dart';
@@ -22,7 +19,7 @@ class _UserListPageState extends State<UserListPage> {
   final ScrollController scrollController = ScrollController();
   //SharedPreferences? prefs;
   late DataBaseServices db;
-  List<User> selectedUsersList = [];
+  List<List<String>> selectedUsersList = [];
 
   @override
   void initState() {
@@ -96,7 +93,9 @@ class _UserListPageState extends State<UserListPage> {
                   child: ListTile(
                     //selectedColor: Colors.green,
                     onTap: () {
-                      _handleTap(userModel[index]);
+                      
+                      _handleTap(
+                          userModel[index].login, userModel[index].avatarUrl);
                     },
                     leading: ClipOval(
                         child: Image.network(userModel[index].avatarUrl)),
@@ -119,17 +118,22 @@ class _UserListPageState extends State<UserListPage> {
     //print('In scroll handler');
     if (notification is ScrollEndNotification &&
         scrollController.position.maxScrollExtent == scrollController.offset) {
+          ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('New Data Loaded Below'),duration: Duration(seconds: 1),));
       _bloc.add(getUsersList());
     }
     return false;
   }
 
-  _handleTap(User user) {
+  _handleTap(String login, String avatarUrl) {
     db = DataBaseServices();
+    List<String> user = [login, avatarUrl];
+    // print('Insied_handleTap');
+    // print(user);
     if (!selectedUsersList.contains(user)) {
       selectedUsersList.add(user);
+      //print(selectedUsersList[0][1]);
       db.addDataToDb(selectedUsersList);
     }
-    
   }
 }
