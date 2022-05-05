@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 
+import 'Views/selected_users_page.dart';
 import 'Views/users_list_page.dart';
 
 class App extends StatefulWidget {
@@ -18,11 +19,27 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Git Hub Users List'),
+      home: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text('Git Hub Users List'),
+            bottom: const TabBar(
+              tabs: [
+                Tab(text:'Git Hub Users' ,),
+                Tab(text: 'Selected Users',),
+
+              ],
+            ),
+          
+          ),
+          // ignore: prefer_const_literals_to_create_immutables
+          body: TabBarView(children: [
+            UserListPage(),
+            SelectedUsersPage(),
+            
+          ]),
         ),
-        body: UserListPage(),
       ),
     );
   }
